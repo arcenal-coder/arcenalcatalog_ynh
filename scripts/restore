@@ -1,0 +1,4 @@
+#!/bin/bash
+source _common.sh
+source /usr/share/yunohost/helpers
+arcenal_catalog_add

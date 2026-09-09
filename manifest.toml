@@ -1,0 +1,27 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+packaging_format = 2
+id = "arcenalcatalog"
+name = "Catalogue ARCenal"
+description.fr = "Ajoute le catalogue d’applications ARCenal à YunoHost"
+description.en = "Adds the ARCenal application catalog to YunoHost"
+version = "1.0.0~ynh1"
+maintainers = ["ARCenal"]
+
+[upstream]
+license = "GPL-3.0-or-later"
+code = "https://github.com/arcenal-coder/arcenalcatalog_ynh"
+
+[integration]
+yunohost = ">= 12.1"
+helpers_version = "2.1"
+architectures = "all"
+multi_instance = false
+ldap = false
+sso = false
+disk = "1M"
+ram.build = "10M"
+ram.runtime = "1M"
+
+[install]
+
+[resources]

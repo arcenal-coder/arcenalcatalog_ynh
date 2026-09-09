@@ -1,0 +1,6 @@
+#!/bin/bash
+source _common.sh
+source /usr/share/yunohost/helpers
+ynh_script_progression "Ajout du catalogue ARCenal..."
+arcenal_catalog_add
+ynh_script_progression "Catalogue ARCenal enregistré."
