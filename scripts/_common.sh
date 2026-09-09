@@ -30,6 +30,41 @@ finally:
 PY
 }
 
+arcenal_repair_legacy_portal_version() {
+    python3 - <<'PY'
+import json
+import os
+import re
+
+app_dir = "/etc/yunohost/apps/arcenalportail"
+
+toml_path = os.path.join(app_dir, "manifest.toml")
+if os.path.exists(toml_path):
+    with open(toml_path, encoding="utf-8") as handle:
+        content = handle.read()
+    repaired = re.sub(
+        r'(?m)^version[ \t]*=[ \t]*"(\d+\.\d+\.\d+)~beta\d+\+ynh(\d+)"[ \t]*$',
+        r'version = "\1~ynh\2"',
+        content,
+    )
+    if repaired != content:
+        with open(toml_path, "w", encoding="utf-8") as handle:
+            handle.write(repaired)
+
+json_path = os.path.join(app_dir, "manifest.json")
+if os.path.exists(json_path):
+    with open(json_path, encoding="utf-8") as handle:
+        manifest = json.load(handle)
+    version = manifest.get("version", "")
+    match = re.fullmatch(r"(\d+\.\d+\.\d+)~beta\d+\+ynh(\d+)", version)
+    if match:
+        manifest["version"] = f"{match.group(1)}~ynh{match.group(2)}"
+        with open(json_path, "w", encoding="utf-8") as handle:
+            json.dump(manifest, handle, ensure_ascii=False, indent=4)
+            handle.write("\n")
+PY
+}
+
 arcenal_catalog_remove() {
     python3 - "$catalog_file" "$catalog_id" <<'PY'
 import os,sys,tempfile,yaml

@@ -4,7 +4,7 @@ id = "arcenalcatalog"
 name = "Catalogue ARCenal"
 description.fr = "Ajoute le catalogue d’applications ARCenal à YunoHost"
 description.en = "Adds the ARCenal application catalog to YunoHost"
-version = "1.0.0~ynh1"
+version = "1.0.1~ynh1"
 maintainers = ["ARCenal"]
 
 [upstream]
