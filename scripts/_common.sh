@@ -47,5 +47,8 @@ try:
 finally:
     if os.path.exists(tmp): os.unlink(tmp)
 PY
-    rm -f "/var/cache/yunohost/repo/${catalog_id}.json"
+    python3 - "/var/cache/yunohost/repo/${catalog_id}.json" <<'PY'
+import os,sys
+if os.path.exists(sys.argv[1]): os.unlink(sys.argv[1])
+PY
 }
