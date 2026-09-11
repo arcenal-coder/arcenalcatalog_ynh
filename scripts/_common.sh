@@ -28,6 +28,10 @@ try:
 finally:
     if os.path.exists(tmp): os.unlink(tmp)
 PY
+    # The catalog definition may be unchanged while its application index has
+    # changed. Remove the cached index so YunoHost retrieves the published
+    # catalog on its next display.
+    rm -f "/var/cache/yunohost/repo/${catalog_id}.json"
 }
 
 
