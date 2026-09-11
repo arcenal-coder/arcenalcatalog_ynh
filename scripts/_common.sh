@@ -30,68 +30,6 @@ finally:
 PY
 }
 
-arcenal_repair_legacy_portal_version() {
-    python3 - <<'PY'
-import json
-import os
-import re
-
-app_dir = "/etc/yunohost/apps/arcenalportail"
-
-toml_path = os.path.join(app_dir, "manifest.toml")
-if os.path.exists(toml_path):
-    with open(toml_path, encoding="utf-8") as handle:
-        content = handle.read()
-    repaired = re.sub(
-        r'(?m)^version[ \t]*=[ \t]*"(\d+\.\d+\.\d+)~beta\d+\+ynh(\d+)"[ \t]*$',
-        r'version = "\1~ynh\2"',
-        content,
-    )
-    if repaired != content:
-        with open(toml_path, "w", encoding="utf-8") as handle:
-            handle.write(repaired)
-
-json_path = os.path.join(app_dir, "manifest.json")
-if os.path.exists(json_path):
-    with open(json_path, encoding="utf-8") as handle:
-        manifest = json.load(handle)
-    version = manifest.get("version", "")
-    match = re.fullmatch(r"(\d+\.\d+\.\d+)~beta\d+\+ynh(\d+)", version)
-    if match:
-        manifest["version"] = f"{match.group(1)}~ynh{match.group(2)}"
-        with open(json_path, "w", encoding="utf-8") as handle:
-            json.dump(manifest, handle, ensure_ascii=False, indent=4)
-            handle.write("\n")
-PY
-}
-
-arcenal_repair_legacy_portal_backup() {
-    local portal_scripts="/etc/yunohost/apps/arcenalportail/scripts"
-    [[ -d "$portal_scripts" ]] || return 0
-
-    cat > "$portal_scripts/backup" <<'EOF'
-#!/bin/bash
-source ../settings/scripts/_common.sh
-source /usr/share/yunohost/helpers
-ynh_backup "$install_dir"
-ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
-ynh_backup "/etc/php/$php_version/fpm/pool.d/$app.conf"
-EOF
-
-    cat > "$portal_scripts/restore" <<'EOF'
-#!/bin/bash
-source ../settings/scripts/_common.sh
-source /usr/share/yunohost/helpers
-ynh_restore "$install_dir"
-ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
-ynh_restore "/etc/php/$php_version/fpm/pool.d/$app.conf"
-chown -R "$app:www-data" "$install_dir"
-ynh_systemctl --service="php$php_version-fpm" --action=reload
-ynh_systemctl --service=nginx --action=reload
-EOF
-
-    chmod 755 "$portal_scripts/backup" "$portal_scripts/restore"
-}
 
 arcenal_catalog_remove() {
     python3 - "$catalog_file" "$catalog_id" <<'PY'
